@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Proforma Invoice</title>
+
+<style>
+body { font-family: Arial; font-size: 14px; margin: 20px; }
+h2 { text-align: center; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+table, th, td { border: 1px solid #000; }
+th, td { padding: 6px; text-align: center; }
+th { background: yellow; }
+input, textarea { width: 100%; padding: 4px; box-sizing: border-box; }
+button { padding: 6px 12px; background: #1a73e8; color: #fff; border: none; cursor: pointer; }
+button:hover { background: #0c5bd6; }
+.remove-btn { background: #d93025; }
+.remove-btn:hover { background: #b1271b; }
+</style>
+
+<script>
+function addRow() {
+    let table = document.getElementById("items");
+    let row = table.insertRow(-1);
+
+    row.innerHTML = `
+    <td class="sr"></td>
+    <td><input name="product[]" required></td>
+    <td><input name="cas[]"></td>
+    <td><input name="cat[]"></td>
+    <td><input name="size[]"></td>
+    <td><input name="hsn[]"></td>
+    <td><input type="number" name="qty[]" oninput="calculate()" required></td>
+    <td><input type="number" step="0.01" name="price[]" oninput="calculate()" required></td>
+    <td class="total">0.00</td>
+    <td><button type="button" class="remove-btn" onclick="removeRow(this)">Remove</button></td>
+    `;
+    updateSerials();
+}
+
+function removeRow(btn) {
+    btn.closest("tr").remove();
+    updateSerials();
+    calculate();
+}
+
+function updateSerials() {
+    let s = document.getElementsByClassName("sr");
+    for (let i = 0; i < s.length; i++) s[i].innerText = i + 1;
+}
+
+function numberToWords(num) {
+    const a = ['', 'One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten',
+    'Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+    const b = ['', '', 'Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+    if (num === 0) return 'Zero Only';
+    let str = '';
+    if (num >= 10000000) { str += numberToWords(Math.floor(num/10000000)) + ' Crore '; num %= 10000000; }
+    if (num >= 100000) { str += numberToWords(Math.floor(num/100000)) + ' Lakh '; num %= 100000; }
+    if (num >= 1000) { str += numberToWords(Math.floor(num/1000)) + ' Thousand '; num %= 1000; }
+    if (num >= 100) { str += numberToWords(Math.floor(num/100)) + ' Hundred '; num %= 100; }
+    if (num > 0) str += (a[num] || b[Math.floor(num/10)] + ' ' + a[num%10]);
+    return str + '';
+}
+
+function calculate() {
+    let qty = document.getElementsByName("qty[]");
+    let price = document.getElementsByName("price[]");
+    let totals = document.getElementsByClassName("total");
+    let subtotal = 0;
+
+    for (let i = 0; i < qty.length; i++) {
+        let rowTotal = (qty[i].value || 0) * (price[i].value || 0);
+        totals[i].innerText = rowTotal.toFixed(2);
+        subtotal += rowTotal;
+    }
+
+    document.getElementById("subtotal").innerText = subtotal.toFixed(2);
+
+    let discount = Number(document.getElementById("discount").value || 0);
+    let discountAmount = subtotal * discount / 100;
+    document.getElementById("discountAmount").innerText = discountAmount.toFixed(2);
+
+    let gst = Number(document.getElementById("gst").value || 0);
+    let gstAmount = (subtotal - discountAmount) * gst / 100;
+    document.getElementById("gstAmount").innerText = gstAmount.toFixed(2);
+
+    let grandTotal = (subtotal - discountAmount) + gstAmount;
+    let roundedGrandTotal = Math.round(grandTotal);
+
+    document.getElementById("grandTotal").innerText = roundedGrandTotal;
+    document.getElementById("amount_words").value = numberToWords(roundedGrandTotal);
+}
+</script>
+</head>
+
+<body>
+
+<h2>PROFORMA INVOICE</h2>
+
+<form action="invoice.html" method="get">
+
+<table>
+<tr><td>PI No</td><td><input name="pi_no"></td><td>PI Date</td><td><input type="date" name="pi_date"></td></tr>
+<tr><td>Purchase Order No</td><td><input name="po_no"></td><td>Purchase Order Date</td><td><input type="date" name="po_date"></td></tr>
+<tr><td>Consignee</td><td colspan="3"><input name="customer"></td></tr>
+<tr><td>Billed To</td><td colspan="3"><textarea name="bill_to"></textarea></td></tr>
+<tr><td>Shipped To</td><td colspan="3"><textarea name="ship_to"></textarea></td></tr>
+<tr><td>GSTIN</td><td colspan="3"><input name="gstin"></td></tr>
+</table>
+
+<table id="items">
+<tr>
+<th>Sr</th><th>Product</th><th>CAS</th><th>CAT</th><th>SIZE</th>
+<th>HSN</th><th>Qty</th><th>Rate</th><th>Total</th><th>Action</th>
+</tr>
+</table>
+
+<br>
+<button type="button" onclick="addRow()">Add Item</button>
+
+<p>Subtotal: ₹ <span id="subtotal">0.00</span></p>
+
+Discount % <input type="number" id="discount" name="discount" value="0" oninput="calculate()">
+<p>Discount Amount: ₹ <span id="discountAmount">0.00</span></p>
+
+GST % <input type="number" id="gst" name="gst" value="18" oninput="calculate()">
+<p>GST Amount: ₹ <span id="gstAmount">0.00</span></p>
+
+<h3>Grand Total: ₹ <span id="grandTotal">0</span></h3>
+
+<input name="amount_words" id="amount_words" readonly>
+
+<h3>Terms & Conditions</h3>
+<textarea name="terms">Goods once sold will not be taken back.</textarea>
+
+<br><br>
+<button type="submit">Submit Invoice</button>
+</form>
+
+<script>addRow();</script>
+
+</body>
+</html>
