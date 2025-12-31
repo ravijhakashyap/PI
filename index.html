@@ -21,7 +21,6 @@ button:hover { background: #0c5bd6; }
 function addRow() {
     let table = document.getElementById("items");
     let row = table.insertRow(-1);
-
     row.innerHTML = `
     <td class="sr"></td>
     <td><input name="product[]" required></td>
@@ -49,17 +48,17 @@ function updateSerials() {
 }
 
 function numberToWords(num) {
-    const a = ['', 'One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten',
+    const a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten',
     'Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
-    const b = ['', '', 'Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
-    if (num === 0) return 'Zero Only';
-    let str = '';
-    if (num >= 10000000) { str += numberToWords(Math.floor(num/10000000)) + ' Crore '; num %= 10000000; }
-    if (num >= 100000) { str += numberToWords(Math.floor(num/100000)) + ' Lakh '; num %= 100000; }
-    if (num >= 1000) { str += numberToWords(Math.floor(num/1000)) + ' Thousand '; num %= 1000; }
-    if (num >= 100) { str += numberToWords(Math.floor(num/100)) + ' Hundred '; num %= 100; }
-    if (num > 0) str += (a[num] || b[Math.floor(num/10)] + ' ' + a[num%10]);
-    return str + '';
+    const b=['','', 'Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+    if(num===0) return 'Zero';
+    let str='';
+    if(num>=10000000){ str+=numberToWords(Math.floor(num/10000000))+' Crore '; num%=10000000; }
+    if(num>=100000){ str+=numberToWords(Math.floor(num/100000))+' Lakh '; num%=100000; }
+    if(num>=1000){ str+=numberToWords(Math.floor(num/1000))+' Thousand '; num%=1000; }
+    if(num>=100){ str+=numberToWords(Math.floor(num/100))+' Hundred '; num%=100; }
+    if(num>0) str+=(a[num]||(b[Math.floor(num/10)]+(num%10?' '+a[num%10]:'')));
+    return str.trim();
 }
 
 function calculate() {
@@ -69,26 +68,28 @@ function calculate() {
     let subtotal = 0;
 
     for (let i = 0; i < qty.length; i++) {
-        let rowTotal = (qty[i].value || 0) * (price[i].value || 0);
+        let rowTotal = (qty[i].value||0) * (price[i].value||0);
         totals[i].innerText = rowTotal.toFixed(2);
         subtotal += rowTotal;
     }
 
     document.getElementById("subtotal").innerText = subtotal.toFixed(2);
 
-    let discount = Number(document.getElementById("discount").value || 0);
-    let discountAmount = subtotal * discount / 100;
+    let discountPercent = Number(document.getElementById("discount").value||0);
+    let discountAmount = subtotal * discountPercent / 100;
     document.getElementById("discountAmount").innerText = discountAmount.toFixed(2);
 
-    let gst = Number(document.getElementById("gst").value || 0);
-    let gstAmount = (subtotal - discountAmount) * gst / 100;
+    let freight = Number(document.getElementById("freight").value||0);
+    document.getElementById("freightAmount").innerText = freight.toFixed(2);
+
+    let gstPercent = Number(document.getElementById("gst").value||0);
+    let gstAmount = (subtotal - discountAmount + freight) * gstPercent / 100;
     document.getElementById("gstAmount").innerText = gstAmount.toFixed(2);
 
-    let grandTotal = (subtotal - discountAmount) + gstAmount;
-    let roundedGrandTotal = Math.round(grandTotal);
+    let grandTotal = Math.round(subtotal - discountAmount + freight + gstAmount);
+    document.getElementById("grandTotal").innerText = grandTotal;
 
-    document.getElementById("grandTotal").innerText = roundedGrandTotal;
-    document.getElementById("amount_words").value = numberToWords(roundedGrandTotal);
+    document.getElementById("amount_words").value = numberToWords(grandTotal) + " Only";
 }
 </script>
 </head>
@@ -122,6 +123,9 @@ function calculate() {
 
 Discount % <input type="number" id="discount" name="discount" value="0" oninput="calculate()">
 <p>Discount Amount: ₹ <span id="discountAmount">0.00</span></p>
+
+Freight Charges ₹ <input type="number" id="freight" name="freight" value="0" oninput="calculate()">
+<p>Freight Amount: ₹ <span id="freightAmount">0.00</span></p>
 
 GST % <input type="number" id="gst" name="gst" value="18" oninput="calculate()">
 <p>GST Amount: ₹ <span id="gstAmount">0.00</span></p>
