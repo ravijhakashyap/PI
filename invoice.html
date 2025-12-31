@@ -4,11 +4,7 @@
 <title>Proforma Invoice</title>
 
 <style>
-body {
-    font-family: Arial;
-    font-size: 14px;
-    margin: 20px;
-}
+body { font-family: Arial; font-size: 14px; margin: 20px; }
 
 /* HEADER */
 .header {
@@ -18,122 +14,59 @@ body {
     padding-bottom: 10px;
     margin-bottom: 15px;
 }
-
-.logo {
-    width: 20%;
-}
-
-.logo img {
-    max-width: 120px;
-}
-
+.logo { width: 20%; }
+.logo img { max-width: 120px; }
 .company {
     width: 80%;
     text-align: center;
 }
+.company h2 { margin: 0; }
+.company p { margin: 3px 0; font-size: 13px; }
 
-.company h2 {
-    margin: 0;
-    font-size: 20px;
-}
+/* TABLE */
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+table, th, td { border: 1px solid #000; }
+th, td { padding: 6px; text-align: center; }
+th { background: yellow; }
 
-.company p {
-    margin: 2px 0;
-    font-size: 13px;
-}
-
-/* TABLES */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-table, th, td {
-    border: 1px solid #000;
-}
-
-th, td {
-    padding: 6px;
-    text-align: center;
-}
-
-th {
-    background: yellow;
-}
-
-/* TOTALS */
-.totals {
-    width: 40%;
-    float: right;
-    margin-top: 15px;
-}
-
-/* FOOTER */
-.footer {
-    margin-top: 40px;
-    clear: both;
-}
-
-.signature {
-    text-align: right;
-    margin-top: 60px;
-    font-weight: bold;
-}
+/* TOTAL TABLE */
+.total-table { width: 40%; float: right; margin-top: 15px; }
 
 /* PRINT */
-button {
-    padding: 8px 15px;
-    background: #1a73e8;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-}
-
-@media print {
-    button { display: none; }
-    body { margin: 0; }
-}
-
-@page {
-    size: A4;
-    margin: 10mm;
-}
+button { padding: 8px 15px; background: #1a73e8; color: #fff; border: none; cursor: pointer; }
+@media print { button { display: none; } body { margin: 0; } }
 </style>
 </head>
 
 <body>
 
-<button onclick="window.print()">Print / Save as PDF</button>
+<button onclick="window.print()">Print / Save PDF</button>
 
-<!-- ================= HEADER ================= -->
+<!-- COMPANY HEADER -->
 <div class="header">
     <div class="logo">
-        <!-- Replace logo.png with your logo file -->
         <img src="logo.png" alt="Company Logo">
     </div>
-
     <div class="company">
         <h2>GLS GLOBAL LAB SOLUTIONS PVT LTD</h2>
         <p>
-            Unit 315-316-317, 3rd Floor, Tower A, Plot No. 4B, THE ADDRESS, District Center<br>
-            Mayur Vihar, Phase 1 Extn., East Delhi, New Delhi - 110091
+            Unit 315-316-317, 3rd Floor, Tower A, Plot No. 4B, THE ADDRESS<br>
+            Mayur Vihar Phase 1 Extn., East Delhi, New Delhi - 110091
         </p>
-        <p><b>GST No.:</b> 07AAJCG8021F1ZQ</p>
+        <p><b>GST No:</b> 07AAJCG8021F1ZQ</p>
     </div>
 </div>
 
 <h3 align="center">PROFORMA INVOICE</h3>
 
-<!-- ================= INVOICE DETAILS ================= -->
 <table>
 <tr>
     <td><b>PI No:</b> <span id="pi_no"></span></td>
     <td><b>PI Date:</b> <span id="pi_date"></span></td>
 </tr>
 <tr>
-    <td><b>Purchase Order No:</b> <span id="po_no"></span></td>
-    <td><b>Purchase Order Date:</b> <span id="po_date"></span></td>
+    <td><b>PO No:</b> <span id="po_no"></span></td>
+    <td><b>PO Date:</b> <span id="po_date"></span></td>
 </tr>
 <tr>
     <td colspan="2"><b>Consignee:</b> <span id="customer"></span></td>
@@ -147,107 +80,113 @@ button {
 </tr>
 </table>
 
-<!-- ================= ITEMS ================= -->
 <table>
+<thead>
 <tr>
-    <th>Sr</th>
-    <th>Product</th>
-    <th>CAS</th>
-    <th>CAT</th>
-    <th>SIZE</th>
-    <th>HSN</th>
-    <th>Qty</th>
-    <th>Rate</th>
-    <th>Total</th>
+<th>Sr</th>
+<th>Product</th>
+<th>CAS</th>
+<th>CAT</th>
+<th>SIZE</th>
+<th>HSN</th>
+<th>Qty</th>
+<th>Rate</th>
+<th>Total</th>
 </tr>
+</thead>
 <tbody id="items"></tbody>
 </table>
 
-<!-- ================= TOTALS ================= -->
-<table class="totals">
+<!-- TOTALS -->
+<table class="total-table">
 <tr><td>Subtotal</td><td>₹ <span id="subtotal"></span></td></tr>
 <tr>
     <td>Discount (<span id="discountPercent"></span>%)</td>
     <td>₹ <span id="discountAmount"></span></td>
 </tr>
-<tr><td>GST</td><td><span id="gst"></span></td></tr>
-<tr><td>GST Amount</td><td>₹ <span id="gstAmount"></span></td></tr>
+<tr><td>Freight</td><td>₹ <span id="freight"></span></td></tr>
+<tr>
+    <td>GST (<span id="gstPercent"></span>%)</td>
+    <td>₹ <span id="gstAmount"></span></td>
+</tr>
 <tr><th>Grand Total</th><th>₹ <span id="grandTotal"></span></th></tr>
 </table>
 
 <br style="clear:both">
 
-<p><b>Amount in Words:</b> <span id="amount_words"></span> Only</p>
+<p><b>Amount in Words:</b> <span id="amount_words"></span></p>
 
-<!-- ================= FOOTER ================= -->
-<div class="footer">
-    <h3>Bank Details</h3>
-    <p>
-        <b>Bank:</b> ICICI Bank, Mayur Vihar Phase 1 Branch<br>
-        <b>Account No:</b> 629705019270<br>
-        <b>IFSC:</b> ICIC0006297
-    </p>
+<!-- BANK DETAILS -->
+<h3>Bank Details</h3>
+<p>
+<b>Bank:</b> ICICI Bank, Mayur Vihar Phase 1 Branch<br>
+<b>Account No:</b> 629705019270<br>
+<b>IFSC:</b> ICIC0006297
+</p>
 
-    <h3>Terms & Conditions</h3>
-    <p id="terms"></p>
+<h3>Terms & Conditions</h3>
+<p id="terms"></p>
 
-    <div class="signature">
-        For GLS GLOBAL LAB SOLUTIONS PVT LTD<br><br><br>
-        Authorised Signatory
-    </div>
-</div>
+<br><br>
+<p align="right">
+For <b>GLS GLOBAL LAB SOLUTIONS PVT LTD</b><br><br><br>
+<b>Authorised Signatory</b>
+</p>
 
-<!-- ================= SCRIPT ================= -->
 <script>
 const p = new URLSearchParams(window.location.search);
 
-[
-"pi_no","pi_date","po_no","po_date","customer",
-"bill_to","ship_to","gstin","terms","amount_words"
-].forEach(id => document.getElementById(id).innerText = p.get(id));
+/* BASIC DETAILS */
+["pi_no","pi_date","po_no","po_date","customer","bill_to","ship_to","gstin","terms"]
+.forEach(id => document.getElementById(id).innerText = p.get(id) || '');
 
-let product = p.getAll("product[]");
-let cas = p.getAll("cas[]");
-let cat = p.getAll("cat[]");
-let size = p.getAll("size[]");
-let hsn = p.getAll("hsn[]");
-let qty = p.getAll("qty[]");
-let price = p.getAll("price[]");
+/* ITEMS */
+let products=p.getAll("product[]"),
+cas=p.getAll("cas[]"),
+cat=p.getAll("cat[]"),
+size=p.getAll("size[]"),
+hsn=p.getAll("hsn[]"),
+qty=p.getAll("qty[]"),
+price=p.getAll("price[]");
 
-let subtotal = 0;
-let tbody = document.getElementById("items");
+let subtotal=0;
+let tbody=document.getElementById("items");
 
-for (let i = 0; i < product.length; i++) {
-    let total = qty[i] * price[i];
-    subtotal += total;
-    tbody.innerHTML += `
+for(let i=0;i<products.length;i++){
+    let total=qty[i]*price[i];
+    subtotal+=total;
+    tbody.innerHTML+=`
     <tr>
         <td>${i+1}</td>
-        <td>${product[i]}</td>
+        <td>${products[i]}</td>
         <td>${cas[i]}</td>
         <td>${cat[i]}</td>
         <td>${size[i]}</td>
         <td>${hsn[i]}</td>
         <td>${qty[i]}</td>
-        <td>${price[i]}</td>
+        <td>${(+price[i]).toFixed(2)}</td>
         <td>${total.toFixed(2)}</td>
     </tr>`;
 }
 
-let discount = Number(p.get("discount") || 0);
-let discountAmount = subtotal * discount / 100;
+/* CALCULATIONS */
+let discountPercent=+p.get("discount")||0;
+let gstPercent=+p.get("gst")||0;
+let freight=+p.get("freight")||0;
 
-let gst = Number(p.get("gst") || 0);
-let gstAmount = (subtotal - discountAmount) * gst / 100;
+let discountAmount=subtotal*discountPercent/100;
+let gstAmount=(subtotal-discountAmount+freight)*gstPercent/100;
+let grandTotal=Math.round(subtotal-discountAmount+freight+gstAmount);
 
-let grandTotal = Math.round((subtotal - discountAmount) + gstAmount);
-
-document.getElementById("subtotal").innerText = subtotal.toFixed(2);
-document.getElementById("discountPercent").innerText = discount;
-document.getElementById("discountAmount").innerText = discountAmount.toFixed(2);
-document.getElementById("gst").innerText = gst + "%";
-document.getElementById("gstAmount").innerText = gstAmount.toFixed(2);
-document.getElementById("grandTotal").innerText = grandTotal;
+/* DISPLAY */
+document.getElementById("subtotal").innerText=subtotal.toFixed(2);
+document.getElementById("discountPercent").innerText=discountPercent;
+document.getElementById("discountAmount").innerText=discountAmount.toFixed(2);
+document.getElementById("freight").innerText=freight.toFixed(2);
+document.getElementById("gstPercent").innerText=gstPercent;
+document.getElementById("gstAmount").innerText=gstAmount.toFixed(2);
+document.getElementById("grandTotal").innerText=grandTotal;
+document.getElementById("amount_words").innerText=p.get("amount_words");
 </script>
 
 </body>
