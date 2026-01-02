@@ -121,10 +121,10 @@ function calculate() {
 
 <p>Subtotal: ₹ <span id="subtotal">0.00</span></p>
 
-Discount % <input type="number" id="discount" name="discount" value="0" oninput="calculate()">
+Discount % <input type="number" id="discount" name="discount" step="0.01" value="0" oninput="calculate()">
 <p>Discount Amount: ₹ <span id="discountAmount">0.00</span></p>
 
-Freight Charges ₹ <input type="number" id="freight" name="freight" value="0" oninput="calculate()">
+Freight Charges ₹ <input type="number" id="freight" name="freight" step="0.01" value="0" oninput="calculate()">
 <p>Freight Amount: ₹ <span id="freightAmount">0.00</span></p>
 
 GST % <input type="number" id="gst" name="gst" value="18" oninput="calculate()">
@@ -145,3 +145,4 @@ GST % <input type="number" id="gst" name="gst" value="18" oninput="calculate()">
 
 </body>
 </html>
+
